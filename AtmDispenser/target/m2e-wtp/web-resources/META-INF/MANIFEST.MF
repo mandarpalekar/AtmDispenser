@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Implementation-Title: AtmDispenser
+Implementation-Version: 1.4.2.RELEASE
+Built-By: you
+Implementation-Vendor-Id: com.suncorp.atm
+Build-Jdk: 1.8.0_144
+Implementation-URL: http://projects.spring.io/spring-boot/AtmDispenser
+ /
+Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
+

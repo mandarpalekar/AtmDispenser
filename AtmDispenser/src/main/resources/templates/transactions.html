@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Transactions Management</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link rel="stylesheet" href="bootstrap.min.css" media="screen"/>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-lg-offset-3" style="margin-left: 0%; padding-left: 55px; padding-right: 55px;">
+            <a href="/transactions"><img src="logo.png" style="width:100%;"/></a>
+        </div>
+    </div>
+    <div class="page-header" id="banner">
+        <div class="row">
+            <div class="col-lg-8 col-md-7 col-sm-6">
+                <h1>Make A Withdrawal</h1>
+                <form>                    
+                    <div class="form-group">
+                        <label for="amt_to_withdraw">Enter Withdrawal Amount</label>
+                        <input type="text" class="form-control" id="amt_to_withdraw"/>
+                    </div>                    
+                    <button type="submit" class="btn btn-default" id="btn_submit">Withdraw</button>
+                </form>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-lg-8 col-md-7 col-sm-6">
+                <a href="denominations">Go to denominations page</a>
+            </div>
+        </div>
+        <br />        
+    </div>
+    <div th:replace="fragments/footer :: footer">...</div>
+</div>
+<script src="jquery.js" type="application/javascript"></script>
+<script type="application/javascript">
+    $(document).ready(function () {
+        $('#btn_submit').on("click",function(e){
+            e.preventDefault();
+            var amount = $("#amt_to_withdraw").val();
+            if($.trim(amount)===""){
+                alert("Amount cannot be empty");
+            }
+            else{                
+                $.ajax({
+                   type:"POST",
+                   url:"withdraw",
+                   data:{amount:amount},
+                   success:function (data) {
+                       if (alert(data)){
+                           window.location.reload();
+                       }
+                   }
+                });
+            }
+        });
+
+        //Complete order button handler
+
+        $('.delete-order').on("click", function(e){
+            e.preventDefault();
+
+            if(confirm("Are you sure the order is complete?")){
+                var Id = parseInt($(this).closest("td").attr("id"));
+
+                $.ajax({
+                    type:"POST",
+                    url:"/removeorder",
+                    data:{Id:Id},
+                    success:function (data) {
+                        $(".delete-order").closest("td#"+data).parent("tr").fadeOut("slow",function(){
+                            $(".delete-order").closest("td#"+data).parent("tr").remove();
+                        });
+                    }
+                });
+            }
+
+        });
+
+    });
+</script>
+</body>
+</html>

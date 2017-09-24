@@ -1,0 +1,113 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Denominations</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link rel="stylesheet" href="bootstrap.min.css" media="screen"/>
+    <style>
+        .navigation-order{
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-lg-offset-3" style="margin-left: 0%; padding-left: 55px; padding-right: 55px;">
+            <a href="/denominations"><img src="logo.png" style="width:100%;"/></a>
+        </div>
+    </div>
+    <div class="page-header" id="banner">
+        <div class="row">
+            <div class="col-lg-8 col-md-7 col-sm-6">
+                <h1>Denominations</h1>
+
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>Denomination</th>
+                        <th>Total Notes</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr th:each="denom : ${denominations}">
+                        <td th:text="${denom.name}"></td>
+                        <td th:text="${denom.total}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 col-md-7 col-sm-6">
+                <form>
+                    <div class="form-group">
+                        <label for="name">Denominations in AUD</label>
+                    </div>
+                    <div class="form-group">
+                    	<select class = "form-control" id = "denomination">
+                 			<option th:each="denom : ${denominations}"
+                                 th:value="${denom.id}"
+                                 th:text="${denom.name}"/>                                                     
+             			</select>
+             		</div>
+                    <div class="form-group">
+                        <label for="notes">Add Notes:</label>
+                        <input type="text" class="form-control" id="notes"/>
+                    </div>
+                    <input type="hidden" name="selectedInput" id="selectedInput" value="" />
+                    <input type="hidden" name="textInput" id="textInput" value="" />
+                    <button type="submit" class="btn btn-default" id="btn_submit">Add Notes</button>
+                </form>
+            </div>
+        </div>
+        <br />
+        <div class="row navigation-order" >
+            <div class="col-lg-8 col-md-7 col-sm-6" style="margin:2px 0 45px;">
+                <a href="transactions">Click here to go to Note Dispense Screen</a>
+            </div>
+        </div>
+    </div>
+    <div th:replace="fragments/footer :: footer">...</div>
+</div>
+<script src="jquery.js" type="application/javascript"></script>
+<script type="application/javascript">
+    $(document).ready(function () {
+       $('#btn_submit').on("click",function (e) {
+    	   var selectedValue = $("#denomination option:selected").val();
+    	   var objHidden = $('#selectedInput').val(selectedValue);
+    	   var textHidden = $('#notes').val();
+           e.preventDefault();
+           var denomName, denomNotes;
+           denomName = $('#denomination').val();
+           denomNotes = $('#notes').val();
+           if($.trim(denomNotes) === ""){
+               alert("No. of Notes cannot be empty");
+           } else {
+               var data = {};
+               data["name"] = denomName;
+               data["total"] = denomNotes;
+               $.ajax({
+                   type: "PUT",
+                   contentType: "application/json",
+                   url: "savedenomination",
+                   data: JSON.stringify(data),
+                   dataType: 'json',
+                   timeout: 6000,
+                   success: function (data) {
+                       if (confirm("Notes added to denomination " +data)){
+                           window.location.reload();
+                       }else{
+                    	   $(".refresh-after-ajax").load(window.location + " .refresh-after-ajax");
+                       }
+                   }
+               });
+           }
+          
+       });
+    });
+</script>
+</body>
+</html>
